@@ -38,7 +38,7 @@ class FleetBookingLine(models.Model):
                                  help="Shows the room Booking")
     fleet_id = fields.Many2one('fleet.vehicle.model',
                                string="Vehicle",
-                               help='Indicates the Vehicle')
+                               help='Indicates the Vehicle', domain=[('status','=', 'available')])
     description = fields.Char(string='Description',
                               related='fleet_id.display_name',
                               help="Description of Vehicle")
@@ -81,6 +81,11 @@ class FleetBookingLine(models.Model):
         related='booking_id.state',
         string="Order Status",
         help=" Status of the Order",
+        copy=False)
+    status = fields.Selection(
+        related='fleet_id.status',
+        string="Status",
+        help=" Status vehicle",
         copy=False)
 
     @api.depends('uom_qty', 'price_unit', 'tax_ids')

@@ -37,3 +37,4 @@ class FleetVehicleModel(models.Model):
                              string='Reference Uom',
                              help="UOM of the product",
                              default=_set_default_uom_id, required=True)
+    status = fields.Selection(string='status', selection=[('available', 'available'), ('unavailable', 'unavailable'),], default="available")

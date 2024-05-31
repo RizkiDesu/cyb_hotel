@@ -37,7 +37,7 @@ class FoodBookingLine(models.Model):
                                  help="Shows the room Booking",
                                  ondelete="cascade")
     food_id = fields.Many2one('lunch.product', string="Product",
-                              help="Indicates the Food Product")
+                              help="Indicates the Food Product", domain=['|', ('new_until', '>', fields.Date.today()),('new_until', '=', False)])
     description = fields.Char(string='Description',
                               help="Description of Food Product",
                               related='food_id.display_name')
