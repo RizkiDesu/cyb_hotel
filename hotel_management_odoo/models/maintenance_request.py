@@ -107,6 +107,8 @@ class MaintenanceRequest(models.Model):
         """Button action for changing the state to team_leader_approve"""
         if self.team_id:
             self.state = 'team_leader_approve'
+            if self.vehicle_maintenance_id:
+                self.vehicle_maintenance_id.status = 'unavailable'
         else:
             raise ValidationError(
                 _("Please assign a Team"))

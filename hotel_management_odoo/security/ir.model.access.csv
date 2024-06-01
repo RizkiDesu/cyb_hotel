@@ -4,7 +4,12 @@ access_hotel_service_user,access.hotel.service.user,model_hotel_service,base.gro
 access_hotel_floor_user,access.hotel.floor.user,model_hotel_floor,base.group_user,1,1,1,1
 access_hotel_room_user,access.hotel.room.user,model_hotel_room,base.group_user,1,1,1,1
 
-access_room_booking_user,access.room.booking.user,model_room_booking,base.group_user,1,1,1,1
+access_room_booking_user,access.room.booking.hotel_group_admin,model_room_booking,hotel_management_odoo.hotel_group_admin,1,1,1,1
+access_room_booking_hotel_group_reception,access.room.booking.hotel_group_reception,model_room_booking,hotel_management_odoo.hotel_group_reception,1,1,1,1
+access_room_booking_maintenance_team_group_leader,access.room.booking.maintenance_team_group_leader,model_room_booking,hotel_management_odoo.maintenance_team_group_leader,1,0,0,0
+access_room_booking_maintenance_team_group_user,access.room.booking.maintenance_team_group_user,model_room_booking,hotel_management_odoo.maintenance_team_group_user,1,0,0,0
+access_room_booking_cleaning_team_group_head,access.room.booking.cleaning_team_group_head,model_room_booking,hotel_management_odoo.cleaning_team_group_head,1,0,0,0
+access_room_booking_cleaning_team_group_user,access.room.booking.cleaning_team_group_user,model_room_booking,hotel_management_odoo.cleaning_team_group_user,1,0,0,0
 access_room_booking_line_user,access.room.booking.line.user,model_room_booking_line,base.group_user,1,1,1,1
 access_food_booking_line_user,access.food.booking.line.user,model_food_booking_line,base.group_user,1,1,1,1
 access_service_booking_line_user,access.service.booking.line.user,model_service_booking_line,base.group_user,1,1,1,1
