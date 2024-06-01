@@ -44,6 +44,16 @@ class RoomBooking(models.Model):
                                  domain="[('type', '!=', 'private'),"
                                         " ('company_id', 'in', "
                                         "(False, company_id))]")
+    
+    state = fields.Selection(selection=[('draft', 'Draft'),
+                                        ('reserved', 'Reserved'),
+                                        ('check_in', 'Check In'),
+                                        ('check_out', 'Check Out'),
+                                        ('cancel', 'Cancelled'),
+                                        ('done', 'Done')], string='State',
+                             help="State of the Booking",
+                             default='draft', tracking=True)
+    
     date_order = fields.Datetime(
         string="Order Date",
         required=True, copy=False,
@@ -126,9 +136,18 @@ class RoomBooking(models.Model):
                                        "booking_id",
                                        string="Vehicle",
                                        help="Hotel fleet reservation detail.")
+    # status_read = False
     room_line_ids = fields.One2many("room.booking.line",
                                     "booking_id", string="Room",
-                                    help="Hotel room reservation detail.")
+                                    help="Hotel room reservation detail."
+                                    
+                                    )
+    # @api.onchange('state')
+    # def _onchange_(self):
+    #     if self.state == 'done' and self.state == 'cancel' and self.state == 'check_out':
+    #         self.status_read = True
+        
+
     food_order_line_ids = fields.One2many("food.booking.line",
                                           "booking_id",
                                           string='Food',
@@ -136,14 +155,6 @@ class RoomBooking(models.Model):
                                                " to Customer and"
                                                " it will included in the "
                                                "main invoice.", )
-    state = fields.Selection(selection=[('draft', 'Draft'),
-                                        ('reserved', 'Reserved'),
-                                        ('check_in', 'Check In'),
-                                        ('check_out', 'Check Out'),
-                                        ('cancel', 'Cancelled'),
-                                        ('done', 'Done')], string='State',
-                             help="State of the Booking",
-                             default='draft', tracking=True)
     user_id = fields.Many2one(
         comodel_name='res.partner',
         string="Invoice Address",
@@ -305,10 +316,11 @@ class RoomBooking(models.Model):
         fleet_lines = self.vehicle_line_ids
         event_lines = self.event_line_ids
         booking_list = []
+        # product_id = self.env['product.product'].search([("name", "=", "Salon Service")])
         account_move_line = self.env['account.move.line'].search_read(
             domain=[('ref', '=', self.name),
                     ('display_type', '!=', 'payment_term')],
-            fields=['name', 'quantity', 'price_unit', 'product_type'], )
+            fields=['name', 'quantity', 'price_unit', 'product_type'], ) # -----------------------------------------------------------------------------------------------------
         for rec in account_move_line:
             del rec['id']
         if room_lines:
@@ -319,7 +331,7 @@ class RoomBooking(models.Model):
                 booking_dict = {'name': room.room_id.name,
                                 'quantity': room.uom_qty,
                                 'price_unit': room.price_unit,
-                                'product_type': 'room'}
+                                'product_type': 'room'} # -----------------------------------------------------------------------------------------------------
                 if booking_dict not in account_move_line:
                     if not account_move_line:
                         booking_list.append(booking_dict)
@@ -336,7 +348,7 @@ class RoomBooking(models.Model):
                                                          'quantity'] - rec[
                                                          'quantity'],
                                          "price_unit": room.price_unit,
-                                         "product_type": 'room'})
+                                         "product_type": 'room'}) # -----------------------------------------------------------------------------------------------------
                                 else:
                                     booking_list.append(booking_dict)
                     if flag:
@@ -457,7 +469,7 @@ class RoomBooking(models.Model):
         account_move_line = self.env['account.move.line'].search_read(
             domain=[('ref', '=', self.name),
                     ('display_type', '!=', 'payment_term')],
-            fields=['name', 'quantity', 'price_unit', 'product_type'], )
+            fields=['name', 'quantity', 'price_unit', 'product_type'], ) # -----------------------------------------------------------------------------------------------------
         for rec in account_move_line:
             del rec['id']
         booking_dict = {}
@@ -479,7 +491,9 @@ class RoomBooking(models.Model):
             booking_dict = {'name': name,
                             'quantity': line.uom_qty,
                             'price_unit': line.price_unit,
-                            'product_type': product_type}
+                            'product_type': product_type} # -----------------------------------------------------------------------------------------------------
+            # product_id = self.env['product.product'].search(
+            #     [("name", "=", name)])
         return booking_dict
 
     def action_reserve(self):
@@ -597,12 +611,13 @@ class RoomBooking(models.Model):
             }])
             for rec in booking_list:
                 account_move.invoice_line_ids.create([{
+                    # 'product_id': rec['name'],
                     'name': rec['name'],
                     'quantity': rec['quantity'],
                     'price_unit': rec['price_unit'],
                     'move_id': account_move.id,
                     'price_subtotal': rec['quantity'] * rec['price_unit'],
-                    'product_type': rec['product_type'],
+                    'product_type': rec['product_type'], # -----------------------------------------------------------------------------------------------------
                 }])
             self.write({'invoice_status': "invoiced"})
             self.invoice_button_visible = True
