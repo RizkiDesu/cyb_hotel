@@ -78,7 +78,29 @@ class CleaningRequest(models.Model):
         if vals_list.get('sequence', 'New') == 'New':
             vals_list['sequence'] = self.env['ir.sequence'].next_by_code(
                 'cleaning.request')
-        return super().create(vals_list)
+        
+        res = super(CleaningRequest, self).create(vals_list)
+        
+        if res.assigned_id:
+            res.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=res.assigned_id.id,
+                summary='Cleaning Request Assigned',
+                note='A new cleaning request has been assigned.',
+            )
+        
+        return res
+    
+    def write(self, vals_list):
+        res = super(CleaningRequest, self).write(vals_list)
+        if res and self.assigned_id:
+            self.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=self.assigned_id.id,
+                summary='Cleaning Request Updated',
+                note='A cleaning request has been updated.',
+            )
+        return res
 
     @api.onchange('team_id')
     def _onchange_team_id(self):

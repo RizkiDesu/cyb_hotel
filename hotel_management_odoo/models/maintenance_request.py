@@ -94,7 +94,24 @@ class MaintenanceRequest(models.Model):
         if vals_list.get('sequence', 'New') == 'New':
             vals_list['sequence'] = self.env['ir.sequence'].next_by_code(
                 'maintenance.request')
-        return super().create(vals_list)
+        res = super(MaintenanceRequest, self).create(vals_list)
+        if res.assigned_user_id:
+            res.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=res.assigned_user_id.id,
+                summary='Maintenance Request Assigned',
+                note='A new maintenance request has been assigned.',
+            )
+        return res
+    def write(self, vals_list):
+        res = super(MaintenanceRequest, self).write(vals_list)
+        if res and self.assigned_user_id:
+            self.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=self.assigned_user_id.id,
+                summary='Maintenance Request Updated',
+            )
+        return res
 
     @api.onchange('team_id')
     def _onchange_team_id(self):
