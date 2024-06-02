@@ -316,11 +316,12 @@ class RoomBooking(models.Model):
         fleet_lines = self.vehicle_line_ids
         event_lines = self.event_line_ids
         booking_list = []
-        # product_id = self.env['product.product'].search([("name", "=", "Salon Service")])
+         # -----------------------------------------------------------------------------------------------------
+        
         account_move_line = self.env['account.move.line'].search_read(
             domain=[('ref', '=', self.name),
                     ('display_type', '!=', 'payment_term')],
-            fields=['name', 'quantity', 'price_unit', 'product_type'], ) # -----------------------------------------------------------------------------------------------------
+            fields=['name', 'quantity', 'price_unit', 'product_type', 'product_id'], ) # -----------------------------------------------------------------------------------------------------
         for rec in account_move_line:
             del rec['id']
         if room_lines:
@@ -328,7 +329,9 @@ class RoomBooking(models.Model):
             amount_taxed_room += sum(room_lines.mapped('price_tax'))
             amount_total_room += sum(room_lines.mapped('price_total'))
             for room in room_lines:
+                product_id= self.env['product.product'].search([('name', '=', 'room')])
                 booking_dict = {'name': room.room_id.name,
+                                'product_id': product_id.id, # -----------------------------------------------------------------------------------------------------
                                 'quantity': room.uom_qty,
                                 'price_unit': room.price_unit,
                                 'product_type': 'room'} # -----------------------------------------------------------------------------------------------------
@@ -338,12 +341,14 @@ class RoomBooking(models.Model):
                     else:
                         for rec in account_move_line:
                             if rec['product_type'] == 'room':
+                                # product_id.search([('name', '=', rec['product_type'])])
                                 if booking_dict['name'] == rec['name'] and \
                                         booking_dict['price_unit'] == rec[
                                     'price_unit'] and booking_dict['quantity'] \
                                         != rec['quantity']:
                                     booking_list.append(
                                         {'name': room.room_id.name,
+                                         'product_id': product_id.id, # -----------------------------------------------------------------------------------------------------
                                          "quantity": booking_dict[
                                                          'quantity'] - rec[
                                                          'quantity'],
@@ -469,7 +474,7 @@ class RoomBooking(models.Model):
         account_move_line = self.env['account.move.line'].search_read(
             domain=[('ref', '=', self.name),
                     ('display_type', '!=', 'payment_term')],
-            fields=['name', 'quantity', 'price_unit', 'product_type'], ) # -----------------------------------------------------------------------------------------------------
+            fields=['name', 'quantity', 'price_unit', 'product_type', 'product_id'], ) # -----------------------------------------------------------------------------------------------------
         for rec in account_move_line:
             del rec['id']
         booking_dict = {}
@@ -488,7 +493,9 @@ class RoomBooking(models.Model):
             elif line_ids._name == 'event.booking.line':
                 name = line.event_id.name
                 product_type = 'event'
+            product_id= self.env['product.product'].search([('name', '=', product_type)])
             booking_dict = {'name': name,
+                            'product_id': product_id.id,
                             'quantity': line.uom_qty,
                             'price_unit': line.price_unit,
                             'product_type': product_type} # -----------------------------------------------------------------------------------------------------
@@ -602,6 +609,7 @@ class RoomBooking(models.Model):
         if not self.room_line_ids:
             raise ValidationError(_("Please Enter Room Details"))
         booking_list = self._compute_amount_untaxed(True)
+        # product_id= self.env['product.product'].search([('name', '=', 'room')])
         if booking_list:
             account_move = self.env["account.move"].create([{
                 'move_type': 'out_invoice',
@@ -611,7 +619,7 @@ class RoomBooking(models.Model):
             }])
             for rec in booking_list:
                 account_move.invoice_line_ids.create([{
-                    # 'product_id': rec['name'],
+                    'product_id': rec['product_id'],
                     'name': rec['name'],
                     'quantity': rec['quantity'],
                     'price_unit': rec['price_unit'],

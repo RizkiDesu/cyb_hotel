@@ -36,6 +36,7 @@
     'data': [
         'security/hotel_management_odoo_groups.xml',
         'security/hotel_management_odoo_security.xml',
+        'data/data.xml',
         'security/ir.model.access.csv',
         'data/ir_data_sequence.xml',
 

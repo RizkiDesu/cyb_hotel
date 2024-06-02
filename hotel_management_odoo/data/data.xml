@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="hotel_room" model="product.template">
+            <field name="name">room</field>
+            <field name="type">service</field>
+        </record>
+        <record id="hotel_food" model="product.template">
+            <field name="name">food</field>
+            <field name="type">service</field>
+        </record>
+        <record id="hotel_fleet" model="product.template">
+            <field name="name">fleet</field>
+            <field name="type">service</field>
+        </record>
+        <record id="hotel_service" model="product.template">
+            <field name="name">service</field>
+            <field name="type">service</field>
+        </record>
+        <record id="hotel_event" model="product.template">
+            <field name="name">event</field>
+            <field name="type">service</field>
+        </record>
+
+
+    </data>
+</odoo>
