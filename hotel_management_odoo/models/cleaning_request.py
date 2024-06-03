@@ -131,6 +131,13 @@ class CleaningRequest(models.Model):
         """Button action for updating the state to ongoing"""
         if self.support_team_ids:
             self.write({'state': 'ongoing'})
+            for user_support_id in self.support_team_ids:
+                self.activity_schedule(
+                    'mail.mail_activity_data_todo',
+                    user_id= user_support_id.id,
+                    summary='Cleaning Request Support Assigned',
+                    note='cleaning request support has been assigned.',
+                )
         else:
             raise ValidationError(_('Please choose a support'))
 
