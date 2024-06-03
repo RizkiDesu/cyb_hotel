@@ -91,16 +91,16 @@ class CleaningRequest(models.Model):
         
         return res
     
-    def write(self, vals_list):
-        res = super(CleaningRequest, self).write(vals_list)
-        if res and self.assigned_id:
-            self.activity_schedule(
-                'mail.mail_activity_data_todo',
-                user_id=self.assigned_id.id,
-                summary='Cleaning Request Updated',
-                note='A cleaning request has been updated.',
-            )
-        return res
+    # def write(self, vals_list):
+    #     res = super(CleaningRequest, self).write(vals_list)
+    #     if res and self.assigned_id:
+    #         self.activity_schedule(
+    #             'mail.mail_activity_data_todo',
+    #             user_id=self.assigned_id.id,
+    #             summary='Cleaning Request Updated',
+    #             note='A cleaning request has been updated.',
+    #         )
+    #     return res
 
     @api.onchange('team_id')
     def _onchange_team_id(self):

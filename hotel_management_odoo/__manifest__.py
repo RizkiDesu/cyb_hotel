@@ -32,7 +32,7 @@
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': 'https://www.cybrosys.com',
-    'depends': ['account', 'event', 'fleet', 'lunch'],
+    'depends': ['account', 'event', 'fleet', 'lunch', 'stock'],
     'data': [
         'security/hotel_management_odoo_groups.xml',
         'security/hotel_management_odoo_security.xml',

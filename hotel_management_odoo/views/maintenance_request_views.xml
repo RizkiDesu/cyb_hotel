@@ -34,10 +34,10 @@
                             class="btn-primary"/>
                     <button name="action_assign_support" string="Assign Support"
                             groups="hotel_management_odoo.maintenance_team_group_leader"
-                            states="support" type="object"
+                            states="support" type="object" attrs="{'invisible':[('support_team_ids','!=',False)]}"
                             class="btn-primary"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,ongoing,done"/>
+                           statusbar_visible="draft,ongoing,support_ongoing,done"/>
                 </header>
                 <sheet>
                     <div>
