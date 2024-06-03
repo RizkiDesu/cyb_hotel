@@ -167,6 +167,13 @@ class MaintenanceRequest(models.Model):
                     note='A new maintenance request has been assigned to you.',
                 )
             self.state = 'ongoing'
+            for user_support_id in self.support_team_ids:
+                self.activity_schedule(
+                    'mail.mail_activity_data_todo',
+                    user_id= user_support_id.id,
+                    summary='Maintenance Request Support Assigned',
+                    note='Maintenance request support has been assigned.',
+                )
         else:
             raise ValidationError(_('Please choose support'))
         
