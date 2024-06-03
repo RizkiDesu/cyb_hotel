@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- maintenance.request tree view -->
+    <record id="maintenance_request_view_tree" model="ir.ui.view">
+        <field name="name">maintenance.request.view.tree</field>
+        <field name="model">maintenance.request</field>
+        <field name="arch" type="xml">
+            <tree>
+                <!-- Add your fields here -->
+                <field name="sequence"/>
+                <field name="type"/>
+                <field name="team_id"/>
+                <field name="state"/>
+                
+            </tree>
+        </field>
+    </record>
     <!--    Maintenance Request Form View-->
     <record id="maintenance_request_view_form" model="ir.ui.view">
         <field name="name">maintenance.request.view.form</field>

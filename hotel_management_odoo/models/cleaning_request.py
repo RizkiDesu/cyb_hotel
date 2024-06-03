@@ -91,16 +91,16 @@ class CleaningRequest(models.Model):
         
         return res
     
-    # def write(self, vals_list):
-    #     res = super(CleaningRequest, self).write(vals_list)
-    #     if res and self.assigned_id:
-    #         self.activity_schedule(
-    #             'mail.mail_activity_data_todo',
-    #             user_id=self.assigned_id.id,
-    #             summary='Cleaning Request Updated',
-    #             note='A cleaning request has been updated.',
-    #         )
-    #     return res
+    def write(self, vals_list):
+        res = super(CleaningRequest, self).write(vals_list)
+        if res and self.assigned_id:
+            self.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=self.assigned_id.id,
+                summary='Cleaning Request Updated',
+                note='A cleaning request has been updated.',
+            )
+        return res
 
     @api.onchange('team_id')
     def _onchange_team_id(self):
@@ -130,6 +130,13 @@ class CleaningRequest(models.Model):
     def action_assign_assign_support(self):
         """Button action for updating the state to ongoing"""
         if self.support_team_ids:
+            for cleaning_user_id in self.support_team_ids:
+                self.activity_schedule(
+                    'mail.mail_activity_data_todo',
+                    user_id=cleaning_user_id.id,
+                    summary='Cleaning Request Support Assigned',
+                    note='A new cleaning request Support has been assigned.',
+                )
             self.write({'state': 'ongoing'})
         else:
             raise ValidationError(_('Please choose a support'))

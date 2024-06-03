@@ -103,15 +103,15 @@ class MaintenanceRequest(models.Model):
                 note='A new maintenance request has been assigned.',
             )
         return res
-    # def write(self, vals_list):
-    #     res = super(MaintenanceRequest, self).write(vals_list)
-    #     if res and self.assigned_user_id:
-    #         self.activity_schedule(
-    #             'mail.mail_activity_data_todo',
-    #             user_id=self.assigned_user_id.id,
-    #             summary='Maintenance Request Updated',
-    #         )
-    #     return res
+    def write(self, vals_list):
+        res = super(MaintenanceRequest, self).write(vals_list)
+        if res and self.assigned_user_id:
+            self.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=self.assigned_user_id.id,
+                summary='Maintenance Request Updated',
+            )
+        return res
 
     @api.onchange('team_id')
     def _onchange_team_id(self):
@@ -159,6 +159,13 @@ class MaintenanceRequest(models.Model):
     def action_assign_support(self):
         """Button action for changing the state to ongoing"""
         if self.support_team_ids:
+            for user_support_id in self.support_team_ids:
+                self.activity_schedule(
+                    'mail.mail_activity_data_todo',
+                    user_id=user_support_id.id,
+                    summary='Maintenance Request Support',
+                    note='A new maintenance request has been assigned to you.',
+                )
             self.state = 'ongoing'
         else:
             raise ValidationError(_('Please choose support'))
