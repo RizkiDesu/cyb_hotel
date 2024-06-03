@@ -44,3 +44,4 @@ class HotelService(models.Model):
                                  domain=[('type_tax_use', '=', 'sale')],
                                  default=lambda self:
                                  self.env.company.account_sale_tax_id)
+     
